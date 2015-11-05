@@ -1,0 +1,15 @@
+Before Zeroing EEPROM
+   laserTime.seconds ie tube: 379
+   laserTime.uSeconds ie user: 0
+   laserTime.EEPROMwriteCount: 27
+   laserTime.thisVersion: 2
+Before Zeroing EEPROM
+   laserTime.seconds ie tube: 379
+   laserTime.uSeconds ie user: 0
+   laserTime.EEPROMwriteCount: 27
+   laserTime.thisVersion: 2
+After Zeroing EEPROM
+   laserTime.seconds ie tube: 0
+   laserTime.uSeconds ie user: 0
+   laserTime.EEPROMwriteCount: 28
+   laserTime.thisVersion: 0
