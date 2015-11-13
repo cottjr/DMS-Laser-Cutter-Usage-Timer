@@ -26,6 +26,8 @@
  * button input for reset -> make on Nano D6, "pin 6"
  */
 
+ // Kent - altered eeprom read and write calls to extend eeprom life
+
 #define MAX_OUT_CHARS 16  //max nbr of characters to be sent on any one serial command
 
 // initialize the library with the numbers of the interface pins
@@ -90,7 +92,9 @@ void setup() {
   pinMode(TestOutPin2, OUTPUT);
   
   Serial.begin(9600);
-  EEPROM_readAnything(0, laserTime);
+  //EEPROM_readAnything(0, laserTime);
+  //ROUND_ROBIN_EEPROM_ZeroOutWindow();  //use this if you need to clean all the eeprom possitions withing the window defined in the header
+  int addr = ROUND_ROBIN_EEPROM_read(laserTime);
   tubeMillis = laserTime.seconds*1000;
   userMillis = laserTime.uSeconds*1000;
   
@@ -98,8 +102,9 @@ void setup() {
   if ( laserTime.thisVersion == 0 ) {
 	laserTime.thisVersion = ThisCurrentVersion;
 	laserTime.EEPROMwriteCount = laserTime.EEPROMwriteCount + 1;
-	EEPROM_writeAnything(0, laserTime);
-    }
+	//EEPROM_writeAnything(0, laserTime);
+	addr = ROUND_ROBIN_EEPROM_write(laserTime);
+  }
   
   
   // Briefly show Arduino status
@@ -129,7 +134,10 @@ void setup() {
 //  BacklightColor ( 0, 0, 255);
 
   
-  Serial.println("Values stored in EEPROM");
+  Serial.print("Values stored in EEPROM address ");
+  Serial.println(addr);
+
+
   Serial.print("  laserTime.seconds ie tube: ");
   Serial.println(laserTime.seconds);
   
@@ -238,9 +246,16 @@ void loop() {
         laserTime.uSeconds = userMillis/1000;
 		laserTime.EEPROMwriteCount = laserTime.EEPROMwriteCount + 1;
 		laserTime.thisVersion = ThisCurrentVersion;
-        EEPROM_writeAnything(0, laserTime);
-        lastWriteToEEPROMMillis = millis();
+        //EEPROM_writeAnything(0, laserTime);
+		int addr = ROUND_ROBIN_EEPROM_write(laserTime);
+
+		lastWriteToEEPROMMillis = millis();
+        
         Serial.println("User hit reset & Wrote to EEPROM");
+
+		Serial.print("  EEPROM address: ");
+		Serial.println(addr);
+
 		Serial.print("  laserTime.seconds ie tube: ");
 		Serial.println(laserTime.seconds);
   
@@ -274,7 +289,8 @@ void loop() {
 
   // Only write to EEPROM if the current value is more than 5 minutes from the previous EEPROM value
   // to reduce the number of writes to EEPROM, since it is only good for ~ 100,000 writes
-  EEPROM_readAnything(0, laserTime);
+  //EEPROM_readAnything(0, laserTime);
+  int addr = ROUND_ROBIN_EEPROM_read(laserTime);
   unsigned long laserSeconds = laserTime.seconds;
   
   // note - it appears that only one of the following If statements is required  
@@ -287,9 +303,14 @@ void loop() {
     laserTime.uSeconds = userMillis/1000;
 	laserTime.EEPROMwriteCount = laserTime.EEPROMwriteCount + 1;
 	laserTime.thisVersion = ThisCurrentVersion;
-    EEPROM_writeAnything(0, laserTime);
+    //EEPROM_writeAnything(0, laserTime);
+	addr = ROUND_ROBIN_EEPROM_write(laserTime);
     lastWriteToEEPROMMillis = millis();
     Serial.println("Wrote to EEPROM - tube has another 5 minutes of use");
+	
+	Serial.print("  EEPROM address: ");
+	Serial.println(addr);
+
 	Serial.print("  laserTime.seconds ie tube: ");
 	Serial.println(laserTime.seconds);
 	
@@ -308,9 +329,15 @@ void loop() {
     laserTime.uSeconds = userMillis/1000;
 	laserTime.EEPROMwriteCount = laserTime.EEPROMwriteCount + 1;
 	laserTime.thisVersion = ThisCurrentVersion;
-	EEPROM_writeAnything(0, laserTime);
+	//this method has been replaced to distribute the eeprom writing accross a wider address space
+	//EEPROM_writeAnything(0, laserTime);
+	addr = ROUND_ROBIN_EEPROM_write(laserTime);
     lastWriteToEEPROMMillis = millis();
     Serial.println("Wrote to EEPROM - value has changed in last 5 minutes");
+	
+	Serial.print("  EEPROM address: ");
+	Serial.println(addr);
+
 	Serial.print("  laserTime.seconds ie tube: ");
 	Serial.println(laserTime.seconds);
 	
