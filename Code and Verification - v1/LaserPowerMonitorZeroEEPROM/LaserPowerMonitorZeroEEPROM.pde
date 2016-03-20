@@ -63,7 +63,10 @@ void setup() {
 	lcd.println("press reset.... ");
 
 	Serial.println("Before Zeroing EEPROM");
-	EEPROM_readAnything(0, laserTime);
+
+	//EEPROM_readAnything(0, laserTime);
+	ROUND_ROBIN_EEPROM_read(laserTime);
+	ROUND_ROBIN_EEPROM_ZeroOutWindow();
   
 	Serial.print("   laserTime.seconds ie tube: ");
 	Serial.println(laserTime.seconds);
@@ -83,8 +86,11 @@ void loop() {
     if (userReset == LOW) {
 
 		Serial.println("Before Zeroing EEPROM");
-		EEPROM_readAnything(0, laserTime);
+		int addr = ROUND_ROBIN_EEPROM_read(laserTime);
   
+		Serial.print("   address: ");
+		Serial.println(addr);
+
 		Serial.print("   laserTime.seconds ie tube: ");
 		Serial.println(laserTime.seconds);
   
@@ -102,10 +108,10 @@ void loop() {
 		laserTime.uSeconds = 0;
 		laserTime.EEPROMwriteCount = laserTime.EEPROMwriteCount + 1;
 		laserTime.thisVersion = 0;
-		EEPROM_writeAnything(0, laserTime);
+		ROUND_ROBIN_EEPROM_write(laserTime);
 
 		Serial.println("After Zeroing EEPROM");	
-		EEPROM_readAnything(0, laserTime);
+		ROUND_ROBIN_EEPROM_read(laserTime);
   
 		Serial.print("   laserTime.seconds ie tube: ");
 		Serial.println(laserTime.seconds);
