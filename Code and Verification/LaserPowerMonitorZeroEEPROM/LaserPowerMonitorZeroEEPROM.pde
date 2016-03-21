@@ -58,11 +58,18 @@ void setup() {
 	// initialize the LCD: 
 	lcd.begin(16, 2);
 	lcd.setCursor(0,0);
-	lcd.println("open console    ");
+	lcd.println("open serial mon ");
+	    //ie. open the Arduino Serial Monitor to observe more detailed output from the Nano
 	lcd.setCursor(0,1);
-	lcd.println("press reset.... ");
+	lcd.println("press clear btn ");
+        //ie. press the Laser Cutter Timer Clear button to proceed with zeroing stored values
+
 
 	Serial.println("Before Zeroing EEPROM");
+	int addr = ROUND_ROBIN_EEPROM_read(laserTime);
+
+    Serial.print("   Round Robin EEPROM address: ");
+    Serial.println(addr);
 
 	//EEPROM_readAnything(0, laserTime);
 	ROUND_ROBIN_EEPROM_read(laserTime);
@@ -88,8 +95,8 @@ void loop() {
 		Serial.println("Before Zeroing EEPROM");
 		int addr = ROUND_ROBIN_EEPROM_read(laserTime);
   
-		Serial.print("   address: ");
-		Serial.println(addr);
+        Serial.print("   Round Robin EEPROM address: ");
+        Serial.println(addr);
 
 		Serial.print("   laserTime.seconds ie tube: ");
 		Serial.println(laserTime.seconds);
@@ -103,6 +110,10 @@ void loop() {
 		Serial.print("   laserTime.thisVersion: ");
 		Serial.println(laserTime.thisVersion);
 
+
+        // note: if you want to set the timers to some initial value, this is the place to do it...
+        //       simply change the initial values from zero to something else, and proceed...
+
 		// set the counter to zero, increment the write count
 		laserTime.seconds = 0;
 		laserTime.uSeconds = 0;
@@ -110,7 +121,14 @@ void loop() {
 		laserTime.thisVersion = 0;
 		ROUND_ROBIN_EEPROM_write(laserTime);
 
-		Serial.println("After Zeroing EEPROM");	
+
+
+		Serial.println("After Zeroing EEPROM");
+		addr = ROUND_ROBIN_EEPROM_read(laserTime);
+
+        Serial.print("   Round Robin EEPROM address: ");
+		Serial.println(addr);
+
 		ROUND_ROBIN_EEPROM_read(laserTime);
   
 		Serial.print("   laserTime.seconds ie tube: ");

@@ -71,9 +71,10 @@ unsigned long tubeMillis = 0;
 unsigned long lastWriteToEEPROMMillis = 0;   // number of millis that the EEPROM was laser written to
 
 char   buffer[MAX_OUT_CHARS];  //buffer used to format a line (+1 is for trailing 0)
+char   buffer1[MAX_OUT_CHARS];  //buffer used to format a line (+1 is for trailing 0)
 char   buffer2[MAX_OUT_CHARS];  //buffer used to format a line (+1 is for trailing 0)
 
-const unsigned int ThisCurrentVersion = 1;	// version number for this program.  simply counting releases
+const unsigned int ThisCurrentVersion = 2;	// version number for this program.  simply counting releases
 
 struct config_t
 {
@@ -149,7 +150,7 @@ void setup() {
 
   Serial.print("  laserTime.thisVersion: ");
   Serial.println(laserTime.thisVersion);
-	
+
   Serial.println("setup Complete");
   Serial.println("");
 }
@@ -201,7 +202,7 @@ void loop() {
 	}
 	TestOutToggle = !TestOutToggle;
 	
-  
+
     analogVal = analogRead(analogPin);    // read the input pin
 //    Serial.print("anaVal:");
 //    Serial.println(analogVal);
@@ -283,12 +284,18 @@ void loop() {
   userHours = userMillis/hour;
   userMinutes = (userMillis-userHours*hour)/minute;
   userSeconds = (userMillis-userHours*hour-userMinutes*minute)/second;
- 
-  sprintf(buffer, "User    %02d:%02d:%02d", userHours,  userMinutes, userSeconds);
-  sprintf(buffer2,"Tube %05d:%02d:%02d", tubeHours,  tubeMinutes, tubeSeconds);
+
+  sprintf(buffer,  "User    %02d:%02d:%02d", userHours,  userMinutes, userSeconds);
+  sprintf(buffer1, "User ", "Anything?");   // ToDo -> Fix this - wow, this line has to be here or else the prior line is not executed properly. What is going on Arduino?
+  sprintf(buffer2, "Tube %05d:%02d:%02d", tubeHours,  tubeMinutes, tubeSeconds);
+
+//    Serial.print("  buffer is: ");
+//    Serial.println(buffer);
+//    Serial.print("  buffer1 is: ");
+//    Serial.println(buffer1);
 
   // Only write to EEPROM if the current value is more than 5 minutes from the previous EEPROM value
-  // to reduce the number of writes to EEPROM, since it is only good for ~ 100,000 writes
+  // to reduce the number of writes to EEPROM, since any one location is only good for ~ 100,000 writes
   //EEPROM_readAnything(0, laserTime);
   int addr = ROUND_ROBIN_EEPROM_read(laserTime);
   unsigned long laserSeconds = laserTime.seconds;
@@ -334,7 +341,7 @@ void loop() {
 	addr = ROUND_ROBIN_EEPROM_write(laserTime);
     lastWriteToEEPROMMillis = millis();
     Serial.println("Wrote to EEPROM - value has changed in last 5 minutes");
-	
+
 	Serial.print("  EEPROM address: ");
 	Serial.println(addr);
 
@@ -353,6 +360,7 @@ void loop() {
   lcd.setCursor(0,0);
   lcd.print(buffer);
 //  Serial.println(buffer);
+
   lcd.setCursor(0,1);
   lcd.print(buffer2);
 //  Serial.println(buffer2);
