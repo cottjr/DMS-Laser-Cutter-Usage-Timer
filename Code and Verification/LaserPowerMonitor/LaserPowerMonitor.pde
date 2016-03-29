@@ -28,7 +28,10 @@
 
  // Kent - altered eeprom read and write calls to extend eeprom life
 
-#define MAX_OUT_CHARS 16  //max nbr of characters to be sent on any one serial command
+#define MAX_OUT_CHARS 17  //max nbr of characters to be sent on any one serial command,
+// plus the terminating character sprintf needs to prevent it from overwriting following memory locations, yet still
+//    send the complete 16 character string to the LCD
+// sprintf: what a terrible construct...
 
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
@@ -74,7 +77,7 @@ char   buffer[MAX_OUT_CHARS];  //buffer used to format a line (+1 is for trailin
 char   buffer1[MAX_OUT_CHARS];  //buffer used to format a line (+1 is for trailing 0)
 char   buffer2[MAX_OUT_CHARS];  //buffer used to format a line (+1 is for trailing 0)
 
-const unsigned int ThisCurrentVersion = 2;	// version number for this program.  simply counting releases
+const unsigned int ThisCurrentVersion = 3;	// version number for this program.  simply counting releases
 
 struct config_t
 {
@@ -286,7 +289,6 @@ void loop() {
   userSeconds = (userMillis-userHours*hour-userMinutes*minute)/second;
 
   sprintf(buffer,  "User    %02d:%02d:%02d", userHours,  userMinutes, userSeconds);
-  sprintf(buffer1, "User ", "Anything?");   // ToDo -> Fix this - wow, this line has to be here or else the prior line is not executed properly. What is going on Arduino?
   sprintf(buffer2, "Tube %05d:%02d:%02d", tubeHours,  tubeMinutes, tubeSeconds);
 
 //    Serial.print("  buffer is: ");
