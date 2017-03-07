@@ -1,6 +1,0 @@
-approximately matching installation on the Full Spectrum laser.
-
-Note that unit ran fine for a while, but then failed.
-
-Troubleshooting hints that the failure was due to the display contrast potentiometer - losing contact / needing wiping or replacement...
-
