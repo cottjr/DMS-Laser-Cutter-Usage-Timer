@@ -1,7 +1,0 @@
-20 March 2016
-- troubleshooted the initial hardware
-- found that the contrast potentiometer was intermittent, and when it went open, the display became blank even though the backlight continued to function as expected.
-- hence, the potentiometer was disconnected and replaced with fixed resistors.  Left the potentiometer on the board, just because that was easier than removing it.
-- updated the schematic to reflect this
-
-- merged pull request commit 620bc66 from Kent McBride, bumped the software version ID and ran verification
